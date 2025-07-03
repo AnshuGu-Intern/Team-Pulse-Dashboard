@@ -1,15 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addTask } from "../../store/slices/tasksSlice";
 import StatusBadge from "../../components/StatusBadge";
 import TaskForm from "../../components/TaskForm";
+import { FaFilter, FaSort } from "react-icons/fa";
+import { setStatusFilter } from "../../store/slices/uiSlice";
+import StatusSummary from "../../components/StatusSummary";
 
 const TeamLeadView = () => {
   const dispatch = useDispatch();
-
   const members = useSelector((state) => state.members);
   const tasks = useSelector((state) => state.tasks);
   const darkMode = useSelector((state) => state.ui.darkMode);
+  const statusFilter = useSelector((state) => state.ui.statusFilter);
+  const [sortBy, setSortBy] = useState("active");
+
+  const filteredMembers =
+    statusFilter === "all"
+      ? members
+      : members.filter((m) => m.status === statusFilter);
+
+  const sortedMembers = [...filteredMembers].sort((a, b) => {
+    if (sortBy === "active") {
+      const aTasks = tasks.filter(
+        (t) => t.memberId === a.id && t.progress < 100
+      ).length;
+      const bTasks = tasks.filter(
+        (t) => t.memberId === b.id && t.progress < 100
+      ).length;
+      return bTasks - aTasks;
+    } else {
+      return a.name.localeCompare(b.name);
+    }
+  });
 
   const handleTaskSubmit = (taskData) => {
     dispatch(addTask(taskData));
@@ -19,9 +42,53 @@ const TeamLeadView = () => {
     <div className="p-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <h2 className="text-2xl font-bold mb-6">Team Overview</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {members.map((member) => {
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+            <h2 className="text-2xl font-bold">Team Overview</h2>
+            <div className="flex flex-wrap gap-2">
+              <div
+                className={`flex items-center px-3 py-2 rounded-lg ${
+                  darkMode ? "bg-stone-700" : "bg-stone-200"
+                }`}
+              >
+                <FaFilter className="mr-2" />
+                <select
+                  value={statusFilter}
+                  onChange={(e) => dispatch(setStatusFilter(e.target.value))}
+                  className={`bg-transparent ${
+                    darkMode ? "text-stone-100" : "text-stone-900"
+                  }`}
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="working">Working</option>
+                  <option value="break">Break</option>
+                  <option value="meeting">Meeting</option>
+                  <option value="offline">Offline</option>
+                </select>
+              </div>
+
+              <div
+                className={`flex items-center px-3 py-2 rounded-lg ${
+                  darkMode ? "bg-stone-700" : "bg-stone-200"
+                }`}
+              >
+                <FaSort className="mr-2" />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className={`bg-transparent ${
+                    darkMode ? "text-stone-100" : "text-stone-900"
+                  }`}
+                >
+                  <option value="active">Active Tasks</option>
+                  <option value="name">Name</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <StatusSummary />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {sortedMembers.map((member) => {
               const memberTasks = tasks.filter(
                 (task) => task.memberId === member.id
               );
