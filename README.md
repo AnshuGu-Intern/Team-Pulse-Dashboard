@@ -1,8 +1,6 @@
 # Team Pulse Dashboard 🚀
 
-<video controls width="640" height="360" poster="./demo/dark.png">
-  <source src="./demo/video.mp4" type="video/mp4" />
-</video>
+[![Watch the demo](./public/demo/dark.png)](./public/demo/video.mp4)
 
 ## Project Overview
 
@@ -50,9 +48,9 @@ npm run dev
 
 ## 📸 Screenshots
 
-| Light Mode View                 | Dark Mode View                |
-| ------------------------------- | ----------------------------- |
-| ![Light Mode](./demo/light.png) | ![Dark Mode](./demo/dark.png) |
+| Light Mode View                        | Dark Mode View                       |
+| -------------------------------------- | ------------------------------------ |
+| ![Light Mode](./public/demo/light.png) | ![Dark Mode](./public/demo/dark.png) |
 
 ## 🛠️ Development
 
