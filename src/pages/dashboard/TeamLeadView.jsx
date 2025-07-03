@@ -6,6 +6,7 @@ import StatusBadge from "../../components/StatusBadge";
 import ProgressBar from "../../components/ProgressBar";
 import TaskForm from "../../components/TaskForm";
 import StatusSummary from "../../components/StatusSummary";
+import StatusChart from "../../components/StatusChart";
 import { FaFilter, FaSort } from "react-icons/fa";
 
 const TeamLeadView = () => {
@@ -62,11 +63,15 @@ const TeamLeadView = () => {
             <div className="mb-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
                 <h2 className="text-xl sm:text-2xl font-bold">Team Overview</h2>
-                <div className="flex flex-wrap gap-2">
+                <div
+                  className="flex flex-row flex-wrap justify-center sm:justify-end 
+                items-center gap-2 w-full sm:w-auto p-2 sm:p-0"
+                >
                   <div
-                    className={`flex items-center px-3 py-2 rounded-lg ${
-                      darkMode ? "bg-stone-700" : "bg-stone-200"
-                    }`}
+                    className={`flex-1 min-w-[150px] sm:flex-none sm:w-auto 
+                  flex items-center justify-center px-3 py-2 rounded-lg ${
+                    darkMode ? "bg-stone-700" : "bg-stone-200"
+                  }`}
                   >
                     <FaFilter className="mr-2" />
                     <select
@@ -74,7 +79,7 @@ const TeamLeadView = () => {
                       onChange={(e) =>
                         dispatch(setStatusFilter(e.target.value))
                       }
-                      className={`bg-transparent focus:outline-none ${
+                      className={`bg-transparent focus:outline-none w-full ${
                         darkMode ? "text-stone-100" : "text-stone-900"
                       }`}
                     >
@@ -87,15 +92,16 @@ const TeamLeadView = () => {
                   </div>
 
                   <div
-                    className={`flex items-center px-3 py-2 rounded-lg ${
-                      darkMode ? "bg-stone-700" : "bg-stone-200"
-                    }`}
+                    className={`flex-1 min-w-[150px] sm:flex-none sm:w-auto 
+                  flex items-center justify-center px-3 py-2 rounded-lg ${
+                    darkMode ? "bg-stone-700" : "bg-stone-200"
+                  }`}
                   >
                     <FaSort className="mr-2" />
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className={`bg-transparent focus:outline-none ${
+                      className={`bg-transparent focus:outline-none w-full ${
                         darkMode ? "text-stone-100" : "text-stone-900"
                       }`}
                     >
@@ -106,10 +112,17 @@ const TeamLeadView = () => {
                 </div>
               </div>
 
-              <StatusSummary />
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <div className="lg:col-span-1">
+                  <StatusSummary />
+                </div>
+                <div className="lg:col-span-2">
+                  <StatusChart />
+                </div>
+              </div>
             </div>
 
-            {/* Responsive grid layout */}
+            {/* Grid layout */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {sortedMembers.map((member) => (
                 <div
@@ -149,8 +162,17 @@ const TeamLeadView = () => {
                       tasks
                         .filter((t) => t.memberId === member.id)
                         .map((task) => (
-                          <div key={task.id} className="mb-3">
-                            <div className="flex justify-between text-xs sm:text-sm mb-1">
+                          <div
+                            key={task.id}
+                            className={`mb-3 p-3 rounded-lg ${
+                              darkMode ? "bg-stone-600" : "bg-stone-100"
+                            }`}
+                          >
+                            <div
+                              className={`flex justify-between text-xs mb-1 ${
+                                darkMode ? "text-stone-200" : "text-stone-700"
+                              }`}
+                            >
                               <span>{task.title}</span>
                               <span>{task.progress}%</span>
                             </div>
