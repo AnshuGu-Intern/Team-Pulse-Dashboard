@@ -1,6 +1,6 @@
 # Team Pulse Dashboard 🚀
 
-[![Watch the demo](./public/demo/dark.png)](./public/demo/video.mp4)
+[![Watch the demo](./public/demo/dark.png)](https://streamable.com/2i6hdd)
 
 ## Project Overview
 
