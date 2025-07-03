@@ -1,8 +1,17 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateStatus } from "../../store/slices/membersSlice";
-import { FaPlay, FaCoffee, FaUsers, FaPowerOff } from "react-icons/fa";
+import { updateProgress } from "../../store/slices/tasksSlice";
 import StatusBadge from "../../components/StatusBadge";
+import {
+  FaPlay,
+  FaCoffee,
+  FaUsers,
+  FaPowerOff,
+  FaPlus,
+  FaMinus,
+  FaCheck,
+} from "react-icons/fa";
 
 const TeamMemberView = () => {
   const dispatch = useDispatch();
@@ -11,6 +20,16 @@ const TeamMemberView = () => {
   const members = useSelector((state) => state.members);
 
   const currentMember = members.find((m) => m.name === currentUser);
+
+  const tasks = useSelector((state) => state.tasks);
+
+  const memberTasks = tasks.filter(
+    (task) => task.memberId === currentMember?.id
+  );
+
+  const handleProgressChange = (taskId, amount) => {
+    dispatch(updateProgress({ id: taskId, amount }));
+  };
 
   const handleStatusChange = (status) => {
     dispatch(
@@ -69,6 +88,106 @@ const TeamMemberView = () => {
             </button>
           ))}
         </div>
+      </div>
+      <div
+        className={`p-6 rounded-xl shadow-lg ${
+          darkMode ? "bg-stone-700" : "bg-white"
+        }`}
+      >
+        <h2 className="text-xl font-bold mb-4">Your Tasks</h2>
+        {memberTasks.length > 0 ? (
+          <div className="space-y-4">
+            {memberTasks.map((task) => (
+              <div
+                key={task.id}
+                className={`p-4 rounded-lg ${
+                  darkMode ? "bg-stone-600" : "bg-stone-100"
+                }`}
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-medium">{task.title}</h3>
+                  <span
+                    className={`px-2 py-1 rounded text-xs ${
+                      task.progress === 100
+                        ? "bg-emerald-500 text-stone-900"
+                        : darkMode
+                        ? "bg-stone-500"
+                        : "bg-stone-200"
+                    }`}
+                  >
+                    Due: {new Date(task.dueDate).toLocaleDateString()}
+                  </span>
+                </div>
+
+                <div className="flex items-center mb-3">
+                  <div className="w-full bg-stone-200 dark:bg-stone-500 rounded-full h-2 mr-3">
+                    <div
+                      className={`h-2 rounded-full ${
+                        task.progress < 30
+                          ? "bg-red-500"
+                          : task.progress < 70
+                          ? "bg-amber-500"
+                          : "bg-emerald-500"
+                      }`}
+                      style={{ width: `${task.progress}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-sm font-medium">{task.progress}%</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleProgressChange(task.id, -10)}
+                      disabled={task.progress <= 0}
+                      className={`p-2 rounded-full ${
+                        darkMode
+                          ? "bg-stone-500 hover:bg-stone-400"
+                          : "bg-stone-200 hover:bg-stone-300"
+                      } ${
+                        task.progress <= 0
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                    >
+                      <FaMinus />
+                    </button>
+                    <button
+                      onClick={() => handleProgressChange(task.id, 10)}
+                      disabled={task.progress >= 100}
+                      className={`p-2 rounded-full ${
+                        darkMode
+                          ? "bg-stone-500 hover:bg-stone-400"
+                          : "bg-stone-200 hover:bg-stone-300"
+                      } ${
+                        task.progress >= 100
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                    >
+                      <FaPlus />
+                    </button>
+                  </div>
+
+                  {task.progress === 100 && (
+                    <div className="flex items-center text-emerald-500 text-sm">
+                      <FaCheck className="mr-1" />
+                      <span>Completed!</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p
+            className={`text-center py-6 ${
+              darkMode ? "text-stone-400" : "text-stone-500"
+            }`}
+          >
+            No tasks assigned yet
+          </p>
+        )}
       </div>
     </div>
   );
