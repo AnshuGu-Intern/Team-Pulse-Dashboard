@@ -5,8 +5,10 @@ const StatusSummary = () => {
   const members = useSelector((state) => state.members);
   const darkMode = useSelector((state) => state.ui.darkMode);
 
-  const statusCounts = members.reduce((acc, member) => {
-    acc[member.status] = (acc[member.status] || 0) + 1;
+  const allStatuses = ["working", "break", "meeting", "offline"];
+
+  const statusCounts = allStatuses.reduce((acc, status) => {
+    acc[status] = members.filter((m) => m.status === status).length;
     return acc;
   }, {});
 
@@ -17,27 +19,52 @@ const StatusSummary = () => {
     offline: "bg-stone-400",
   };
 
+  const statusLabels = {
+    working: "Working",
+    break: "Break",
+    meeting: "Meeting",
+    offline: "Offline",
+  };
+
   return (
     <div
-      className={`p-4 rounded-xl mb-6 grid grid-cols-2 sm:grid-cols-4 gap-4 ${
-        darkMode ? "bg-stone-700" : "bg-stone-200"
+      className={`p-4 h-full rounded-xl shadow-lg flex flex-col ${
+        darkMode ? "bg-stone-700" : "bg-white"
       }`}
     >
-      {Object.entries(statusCounts).map(([status, count]) => (
-        <div key={status} className="flex items-center">
+      <h3 className="text-lg font-semibold mb-3">Status Summary</h3>
+      <div className="grid grid-cols-2 gap-3 flex-grow">
+        {allStatuses.map((status) => (
           <div
-            className={`w-3 h-3 rounded-full ${statusColors[status]} mr-2`}
-          ></div>
-          <span className="font-medium">{count}</span>
-          <span
-            className={`ml-1 capitalize ${
-              darkMode ? "text-stone-300" : "text-stone-600"
-            }`}
+            key={status}
+            className={`flex flex-col justify-between items-start p-4 rounded-lg cursor-pointer transition-colors duration-200
+              ${
+                darkMode
+                  ? "bg-stone-600 hover:bg-stone-500"
+                  : "bg-stone-100 hover:bg-stone-200"
+              }
+              ${
+                darkMode ? "border border-stone-500" : "border border-stone-200"
+              }
+            `}
           >
-            {status}
-          </span>
-        </div>
-      ))}
+            <div className="flex items-center mb-2">
+              <div
+                className={`w-4 h-4 rounded-full ${statusColors[status]} mr-2`}
+              ></div>
+              <span className="text-2xl font-bold">{statusCounts[status]}</span>
+            </div>
+
+            <span
+              className={`text-sm font-medium ${
+                darkMode ? "text-stone-300" : "text-stone-600"
+              }`}
+            >
+              {statusLabels[status]}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
