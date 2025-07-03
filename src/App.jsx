@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import Header from "./components/Header";
+import TeamLeadView from "./pages/dashboard/TeamLeadView";
+import TeamMemberView from "./pages/dashboard/TeamMemberView";
+import { useSelector } from "react-redux";
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
-  const [currentRole, setCurrentRole] = useState("member");
-
-  const toggleDarkMode = () => setDarkMode(!darkMode);
-  const toggleRole = () =>
-    setCurrentRole(currentRole === "lead" ? "member" : "lead");
+  const currentRole = useSelector((state) => state.role.currentRole);
+  const darkMode = useSelector((state) => state.ui.darkMode);
 
   return (
     <div
@@ -15,14 +14,9 @@ function App() {
         darkMode ? "bg-stone-800 text-stone-100" : "bg-stone-50 text-stone-900"
       }`}
     >
-      <Header
-        darkMode={darkMode}
-        onToggleDarkMode={toggleDarkMode}
-        currentRole={currentRole}
-        onToggleRole={toggleRole}
-      />
+      <Header />
       <main className="container mx-auto px-4 py-8">
-        {/* Content will go here */}
+        {currentRole === "lead" ? <TeamLeadView /> : <TeamMemberView />}
       </main>
     </div>
   );

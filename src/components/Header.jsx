@@ -1,7 +1,13 @@
 import React, { useState } from "react";
-import { FaSun, FaMoon, FaUser, FaUserTie } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import ThemeToggle from "./ThemeToggle";
+import RoleSwitcher from "./RoleSwitcher";
 
-const Header = ({ darkMode, onToggleDarkMode, currentRole, onToggleRole }) => {
+const Header = () => {
+  const darkMode = useSelector((state) => state.ui.darkMode);
+  const currentRole = useSelector((state) => state.role.currentRole);
+  const currentUser = useSelector((state) => state.role.currentUser);
+
   const [imageError, setImageError] = useState(false);
 
   const handleImageError = () => {
@@ -10,11 +16,11 @@ const Header = ({ darkMode, onToggleDarkMode, currentRole, onToggleRole }) => {
 
   return (
     <header
-      className={`py-4 px-6 shadow-lg ${
+      className={`py-3 px-4 shadow-lg transition-colors duration-300 ${
         darkMode ? "bg-stone-900 text-stone-100" : "bg-stone-100 text-stone-900"
       }`}
     >
-      <div className="container mx-auto flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
         <div className="flex items-center">
           {imageError ? (
             <FaUser
@@ -29,37 +35,28 @@ const Header = ({ darkMode, onToggleDarkMode, currentRole, onToggleRole }) => {
               onError={handleImageError}
             />
           )}
-          <h1 className="text-2xl font-bold">Team Pulse</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">Team Pulse</h1>
         </div>
 
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={onToggleRole}
-            className={`flex items-center px-4 py-2 rounded-lg transition-colors ${
+        <div className="flex flex-wrap justify-center items-center gap-2">
+          <div
+            className={`px-2 py-1 rounded-full text-xs sm:text-sm ${
               currentRole === "lead"
-                ? "bg-stone-600 text-stone-100"
-                : "bg-stone-300 text-stone-800 hover:bg-stone-400"
+                ? "bg-amber-500 text-stone-900"
+                : "bg-emerald-500 text-white"
             }`}
           >
-            {currentRole === "lead" ? (
-              <FaUser className="mr-2" />
-            ) : (
-              <FaUserTie className="mr-2" />
-            )}
-            {currentRole === "lead" ? "Member View" : "Lead View"}
-          </button>
+            {currentRole === "lead" ? "Team Lead" : "Member"}
+          </div>
 
-          <button
-            onClick={onToggleDarkMode}
-            className={`p-2 rounded-full focus:outline-none transition-colors ${
-              darkMode
-                ? "bg-stone-700 text-amber-300"
-                : "bg-stone-200 text-stone-700"
-            }`}
-            aria-label="Toggle theme"
-          >
-            {darkMode ? <FaSun size={18} /> : <FaMoon size={18} />}
-          </button>
+          <div className="hidden sm:block">
+            <span className="font-medium text-sm sm:text-base">
+              {currentUser}
+            </span>
+          </div>
+
+          <RoleSwitcher />
+          <ThemeToggle />
         </div>
       </div>
     </header>
